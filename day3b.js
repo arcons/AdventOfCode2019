@@ -21,7 +21,7 @@ function getCommand(input) {
   return {direction, numberOfMoves}
 }
 
-function getCoordinates(direction, numberOfMoves, startPosition, set) {
+function getCoordinates(direction, numberOfMoves, startPosition, set, moveCount) {
   let lastLocation = {}
   for(let i =0; i < numberOfMoves; i++){
     if(direction === 'L'){
@@ -33,29 +33,37 @@ function getCoordinates(direction, numberOfMoves, startPosition, set) {
     } else if(direction === 'D') {
       startPosition.y -= 1;
     }
-    lastLocation = {x: startPosition.x, y: startPosition.y,};
+    moveCount++;
+    if(startPosition.x === 444 && startPosition.y===0) {
+      console.log(moveCount)
+    }
+    lastLocation = {x: startPosition.x, y: startPosition.y}// moveCount:moveCount};
     set.add(JSON.stringify(lastLocation))
   }
-  return {moveSet:set, lastLocation};
+  return {moveSet:set, lastLocation, moveCount};
 }
 // set initial position at 0,0
 let currentPosition = {x: 0, y: 0};
+let numMoves = 0
 wireOne.forEach(element => {
   const {direction, numberOfMoves} = getCommand(element)
-  const {moveSet, lastLocation} = getCoordinates(direction, numberOfMoves, currentPosition, wireOneTrace)
+  const {moveSet, lastLocation, moveCount} = getCoordinates(direction, numberOfMoves, currentPosition, wireOneTrace, numMoves)
+  numMoves = moveCount;
   currentPosition = lastLocation;
   wireOneTrace = moveSet;
 });
 
 currentPosition = {x: 0, y: 0};
+numMoves = 0;
 wireTwo.forEach(element => {
   const {direction, numberOfMoves} = getCommand(element)
-  const {moveSet, lastLocation} = getCoordinates(direction, numberOfMoves, currentPosition, wireTwoTrace)
+  const {moveSet, lastLocation, moveCount} = getCoordinates(direction, numberOfMoves, currentPosition, wireTwoTrace, numMoves)
+  numMoves = moveCount;
   currentPosition = lastLocation;
   wireTwoTrace = moveSet;
   // wireTwoTrace = new Set([...wireTwoTrace, ...moveSet])
 });
-let intersect = new Set([...wireOneTrace].filter(i => wireTwoTrace.has(i)));
+let intersect = new Set([...wireTwoTrace].filter(i => wireOneTrace.has(i)));
 // for partB
 
 let wireOneArray = [...wireOneTrace];
@@ -67,8 +75,10 @@ intersect.forEach(element => {
   if(minSumToPoint > steps) {
     console.log('new minimum')
     minSumToPoint = steps;
-    console.log('index 1', wireOneArray.indexOf(element))
-    console.log('index 2', wireTwoArray.indexOf(element))
+    // the last one is the close between two points plug it into the if for the counter, in case there were previous matches that didn't get added to the set
+    console.log(element)
+    // console.log('index 1', wireOneArray.indexOf(element))
+    // console.log('index 2', wireTwoArray.indexOf(element))
   }
 })
 //22999 too high
