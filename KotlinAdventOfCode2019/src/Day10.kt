@@ -5,9 +5,9 @@ class Day10(val input: List<String>) {
     fun performProcessing() {
         // create a list of all asteroids
         val asteroidSet = mutableSetOf<kotlin.Pair<kotlin.Int, kotlin.Int>>();
-        input.forEachIndexed {index, it ->
+        input.forEachIndexed {index, it ->  
             var astroidIndexes = it.toCharArray().mapIndexed{index, it -> if (it == '#') index else it};
-            astroidIndexes.forEachIndexed { asteroidX, asteroid ->
+            astroidIndexes.forEachIndexed { asteroidX: Char, asteroid: Char ->
                 if(!asteroid.equals('.')) {
                     val asterPosition = Pair(asteroidX, index)
                     asteroidSet.add(asterPosition);
